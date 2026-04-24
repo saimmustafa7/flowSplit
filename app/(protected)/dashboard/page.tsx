@@ -65,10 +65,10 @@ export default function DashboardPage() {
               </div>
               <h2 className="text-lg font-bold font-clash">Recent Solo</h2>
             </div>
-            <div className="text-3xl font-bold text-[var(--text-primary)]">
+            <div className="text-3xl font-bold text-inherit">
                <AnimatedNumber value={totalSoloThisMonth} format={(v) => formatCurrency(v)} />
             </div>
-            <p className="text-[var(--text-secondary)] text-sm mt-1">spent recently</p>
+            <p className="opacity-60 text-sm mt-1">spent recently</p>
             <div className="absolute right-4 bottom-4 text-[var(--text-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
               <ArrowRight />
             </div>
@@ -83,7 +83,7 @@ export default function DashboardPage() {
               </div>
               <h2 className="text-lg font-bold font-clash">Active Groups</h2>
             </div>
-            <div className="text-3xl font-bold text-[var(--text-primary)]">
+            <div className="text-3xl font-bold text-inherit">
                <AnimatedNumber value={groups.length} />
             </div>
             <p className="text-[var(--text-secondary)] text-sm mt-1">groups joined</p>

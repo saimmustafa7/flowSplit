@@ -118,7 +118,7 @@ function TrendIndicator({ current, previous }: { current: number; previous: numb
   const isFlat = Math.abs(pctChange) < 1
 
   return (
-    <span className={`flex items-center gap-1 text-xs font-medium ${isFlat ? 'text-[var(--text-secondary)]' : isUp ? 'text-[var(--negative)]' : 'text-[var(--positive)]'}`}>
+    <span className={`flex items-center gap-1 text-xs font-medium ${isFlat ? 'opacity-60' : isUp ? 'opacity-80' : ''}`}>
       {isFlat ? <Minus size={12} /> : isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
       {isFlat ? 'Flat' : `${Math.abs(pctChange).toFixed(0)}% ${isUp ? 'more' : 'less'}`}
     </span>
@@ -258,8 +258,8 @@ export default function StatsPage() {
                 <p className="text-xs text-[var(--text-secondary)] mb-1">Transactions</p>
                 <p className="text-xl font-bold font-clash">{currentCombined.count}</p>
                 <div className="flex gap-2 mt-1">
-                  <span className="text-xs opacity-60">{currentSolo?.count || 0} solo</span>
-                  <span className="text-xs opacity-60">{currentGroup?.count || 0} group</span>
+                  <span className="text-xs opacity-50">{currentSolo?.count || 0} solo</span>
+                  <span className="text-xs opacity-50">{currentGroup?.count || 0} group</span>
                 </div>
               </Card>
             </div>

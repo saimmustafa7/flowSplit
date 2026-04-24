@@ -17,9 +17,9 @@ export function Button({
   const baseClasses = "inline-flex items-center justify-center min-h-12 rounded-[var(--radius-md)] font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
   
   const variants = {
-    primary: "bg-[var(--brand)] text-white hover:brightness-110",
-    ghost: "bg-transparent text-[var(--brand)] border border-transparent hover:border-[var(--brand)]/40 hover:bg-[var(--brand-dim)]",
-    danger: "bg-transparent text-[var(--negative)] border border-transparent hover:border-[var(--negative)]/40 hover:bg-[var(--negative-dim)]",
+    primary: "bg-[var(--text-primary)] text-[var(--text-inverse)] hover:opacity-90",
+    ghost: "bg-transparent text-[var(--text-primary)] border border-[var(--border-strong)] hover:bg-[var(--bg-hover)]",
+    danger: "bg-transparent text-[var(--text-secondary)] border border-[var(--border-subtle)] hover:border-[var(--negative)] hover:text-[var(--text-primary)]",
     icon: "w-11 h-11 rounded-full bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
   }
 
