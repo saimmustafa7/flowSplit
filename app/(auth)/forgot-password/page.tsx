@@ -8,7 +8,7 @@ import { Mail, KeyRound, Lock, CheckCircle2, ArrowLeft } from 'lucide-react'
 
 type Step = 'email' | 'otp' | 'password' | 'done'
 
-const OTP_LENGTH = 6
+const OTP_LENGTH = 8
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<Step>('email')
@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setError(null)
     const token = otp.join('')
-    if (token.length < OTP_LENGTH) { setError('Enter the full 6-character code'); return }
+    if (token.length < OTP_LENGTH) { setError('Enter the full 8-character code'); return }
     setLoading(true)
     const { error: err } = await supabase.auth.verifyOtp({ email, token, type: 'recovery' })
     setLoading(false)
@@ -159,7 +159,7 @@ export default function ForgotPasswordPage() {
                 <h1 className="text-2xl font-clash">Enter code</h1>
               </div>
               <p className="text-sm text-[var(--text-secondary)] mb-6">
-                We sent a 6-character code to <span className="text-[var(--text-primary)] font-medium">{email}</span>. Check your inbox (and spam folder).
+                We sent a 8-character code to <span className="text-[var(--text-primary)] font-medium">{email}</span>. Check your inbox (and spam folder).
               </p>
               {error && <p className="text-sm text-negative mb-4 bg-negative/10 px-3 py-2 rounded-lg">{error}</p>}
               <form onSubmit={handleVerifyOtp} className="space-y-6">
