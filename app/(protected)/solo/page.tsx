@@ -104,7 +104,7 @@ export default function SoloPage() {
           <h1 className="text-3xl font-bold font-clash">Solo Tracker</h1>
           <p className="text-[var(--text-secondary)]">Manage personal expenses</p>
         </div>
-        <Button onClick={() => setIsAdding(true)} className="hidden md:flex gap-2">
+        <Button onClick={() => setIsAdding(true)} className="flex gap-2">
           <Plus size={18} /> Add
         </Button>
       </div>
@@ -151,13 +151,7 @@ export default function SoloPage() {
         </div>
       )}
 
-      {/* Mobile FAB */}
-      <button 
-        onClick={() => setIsAdding(true)}
-        className="md:hidden fixed bottom-20 right-6 w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white shadow-xl shadow-[var(--accent-glow)] z-30"
-      >
-        <Plus size={24} />
-      </button>
+
 
       <BottomSheet isOpen={isAdding} onClose={() => setIsAdding(false)} title="Add Expense">
         <form onSubmit={handleAdd} className="flex flex-col gap-5">

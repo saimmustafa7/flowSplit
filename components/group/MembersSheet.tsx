@@ -1,11 +1,11 @@
 "use client"
 import React, { useState } from 'react'
 import { Profile } from '@/data/types'
-import { leaveGroup, removeMember } from '@/data/queries/groups'
+import { leaveGroup, removeMember, deleteGroup } from '@/data/queries/groups'
 import { useToast } from '@/context/ToastContext'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { Button } from '@/components/ui/Button'
-import { Crown, LogOut, UserMinus } from 'lucide-react'
+import { Crown, LogOut, UserMinus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface MembersSheetProps {
@@ -58,6 +58,23 @@ export function MembersSheet({
       router.push('/group')
     } catch (err: unknown) {
       showToast(err instanceof Error ? err.message : 'Failed to leave group', 'error')
+    } finally {
+      setLeavingGroup(false)
+    }
+  }
+
+  const handleDeleteGroup = async () => {
+    const confirmation = confirm('DANGER: This will permanently delete the group and all its transactions. This cannot be undone. Are you absolutely sure?')
+    if (!confirmation) return
+    
+    setLeavingGroup(true) // Reuse loading state for simplicity
+    try {
+      await deleteGroup(groupId)
+      showToast('Group deleted permanently', 'info')
+      onClose()
+      router.push('/group')
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to delete group', 'error')
     } finally {
       setLeavingGroup(false)
     }
@@ -137,6 +154,24 @@ export function MembersSheet({
               <LogOut size={16} />
               Leave Group
             </Button>
+          </div>
+        )}
+
+        {/* Admin actions */}
+        {isCreator && (
+          <div className="mt-4 pt-4 border-t border-[var(--border)]">
+            <Button
+              variant="danger"
+              onClick={handleDeleteGroup}
+              isLoading={leavingGroup}
+              className="w-full gap-2 text-negative border border-negative/30 hover:bg-negative/10"
+            >
+              <Trash2 size={16} />
+              Delete Group
+            </Button>
+            <p className="text-[10px] text-center text-[var(--text-tertiary)] mt-2">
+              Only you as the owner can see this action.
+            </p>
           </div>
         )}
       </div>

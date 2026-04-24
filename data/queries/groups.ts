@@ -202,3 +202,27 @@ export async function removeMember(groupId: string, userId: string): Promise<voi
   if (error) throw error
 }
 
+export async function deleteGroup(groupId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user
+  if (!user) throw new Error('Not authenticated')
+
+  // Only the creator can delete the group
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('created_by')
+    .eq('id', groupId)
+    .single()
+  if (groupError) throw groupError
+
+  if (group.created_by !== user.id) {
+    throw new Error('Only the group creator can delete the group')
+  }
+
+  const { error } = await supabase
+    .from('groups')
+    .delete()
+    .eq('id', groupId)
+  if (error) throw error
+}
+

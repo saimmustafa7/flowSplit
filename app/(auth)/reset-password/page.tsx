@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
             placeholder="Confirm new password"
             required
           />
-          <button disabled={loading} className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--brand)] text-white font-semibold disabled:opacity-50">
+          <button disabled={loading} className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--text-primary)] text-[var(--text-inverse)] font-semibold disabled:opacity-50">
             {loading ? 'Updating...' : 'Update password'}
           </button>
         </form>

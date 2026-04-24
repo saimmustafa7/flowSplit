@@ -125,10 +125,10 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 mt-4 bg-accent hover:bg-accent/90 text-white rounded-lg font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:transform-none flex items-center justify-center h-14"
+            className="w-full py-4 mt-4 bg-[var(--text-primary)] hover:opacity-90 text-[var(--text-inverse)] rounded-lg font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:transform-none flex items-center justify-center h-14"
           >
             {loading ? (
-              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-2 border-[var(--text-inverse)] border-t-transparent rounded-full animate-spin"></div>
             ) : (
               'Create Account'
             )}

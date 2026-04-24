@@ -133,12 +133,16 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
          </Link>
       </div>
 
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-2 mb-4">
          <Button onClick={() => setIsAddingTxn(true)} className="flex-1 gap-2 bg-[var(--text-primary)] text-[var(--text-inverse)]" disabled={members.length < 2}>
            <Plus size={18} /> Add Bill
          </Button>
          <Button onClick={() => setIsInviting(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
            <Send size={18} /> Invite
+         </Button>
+         <Button onClick={() => setIsMembersOpen(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
+           <Users size={18} />
+           <span className="hidden sm:inline">Members</span>
          </Button>
       </div>
 

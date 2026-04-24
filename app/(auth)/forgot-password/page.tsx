@@ -138,7 +138,7 @@ export default function ForgotPasswordPage() {
                 />
                 <button
                   disabled={loading}
-                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--brand)] text-white font-semibold disabled:opacity-50 transition-opacity"
+                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--text-primary)] text-[var(--text-inverse)] font-semibold disabled:opacity-50 transition-opacity"
                 >
                   {loading ? 'Sending code...' : 'Send verification code'}
                 </button>
@@ -184,7 +184,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 <button
                   disabled={loading || otp.join('').length < OTP_LENGTH}
-                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--brand)] text-white font-semibold disabled:opacity-50 transition-opacity"
+                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--text-primary)] text-[var(--text-inverse)] font-semibold disabled:opacity-50 transition-opacity"
                 >
                   {loading ? 'Verifying...' : 'Verify code'}
                 </button>
@@ -242,7 +242,7 @@ export default function ForgotPasswordPage() {
                 </p>
                 <button
                   disabled={loading}
-                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--brand)] text-white font-semibold disabled:opacity-50 transition-opacity"
+                  className="w-full h-12 rounded-[var(--radius-md)] bg-[var(--text-primary)] text-[var(--text-inverse)] font-semibold disabled:opacity-50 transition-opacity"
                 >
                   {loading ? 'Updating...' : 'Update password'}
                 </button>
@@ -261,7 +261,7 @@ export default function ForgotPasswordPage() {
               <p className="text-sm text-[var(--text-secondary)]">Your password has been changed successfully.</p>
               <Link
                 href="/login"
-                className="mt-2 w-full h-12 rounded-[var(--radius-md)] bg-[var(--brand)] text-white font-semibold flex items-center justify-center"
+                className="mt-2 w-full h-12 rounded-[var(--radius-md)] bg-[var(--text-primary)] text-[var(--text-inverse)] font-semibold flex items-center justify-center"
               >
                 Back to login
               </Link>
