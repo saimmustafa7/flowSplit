@@ -13,7 +13,7 @@ export function Navbar() {
   
   const { pendingCount } = useNotifications()
 
-  const isRootTab = ['/dashboard', '/group', '/solo', '/notifications'].includes(pathname)
+  const isRootTab = ['/dashboard', '/group', '/solo', '/stats', '/notifications'].includes(pathname)
 
   return (
     <nav className="sticky top-0 z-40 bg-[var(--bg-card)]/80 backdrop-blur-md border-b border-[var(--border)]">

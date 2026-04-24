@@ -1,5 +1,5 @@
 "use client"
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react'
 import { Session, User } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { Profile } from '@/data/types'
@@ -16,50 +16,87 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Timeout-guarded profile fetch — never hangs more than 4s
+async function fetchProfileSafe(userId: string): Promise<Profile | null> {
+  try {
+    const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000))
+    const query = supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+      .then(({ data, error }) => {
+        if (error) {
+          console.warn('Profile fetch error:', error.message)
+          return null
+        }
+        return data as Profile
+      })
+    return await Promise.race([query, timeout])
+  } catch (e) {
+    console.warn('Profile fetch failed/timed out:', e)
+    return null
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const mountedRef = useRef(true)
   const router = useRouter()
 
   const refreshProfile = async (userId?: string) => {
     const id = userId || user?.id
     if (!id) return
-    const { data } = await supabase.from('profiles').select('*').eq('id', id).single()
-    if (data) {
-      setProfile(data as Profile)
+    const data = await fetchProfileSafe(id)
+    if (data && mountedRef.current) {
+      setProfile(data)
     }
   }
 
   useEffect(() => {
-    let mounted = true
+    mountedRef.current = true
 
-    const initSesion = async () => {
+    // Safety timeout — no matter what, stop showing the spinner after 6 seconds
+    const safetyTimer = setTimeout(() => {
+      if (mountedRef.current) {
+        setLoading(false)
+      }
+    }, 6000)
+
+    const initSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        if (mounted) {
+        if (mountedRef.current) {
           setSession(session)
           setUser(session?.user ?? null)
           if (session?.user) {
-            await refreshProfile(session.user.id)
+            const profileData = await fetchProfileSafe(session.user.id)
+            if (mountedRef.current && profileData) {
+              setProfile(profileData)
+            }
           }
         }
       } catch (e) {
-        console.error('Session get error', e)
+        console.error('Session init error:', e)
       } finally {
-        if (mounted) setLoading(false)
+        if (mountedRef.current) setLoading(false)
       }
     }
 
-    initSesion()
+    initSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (mounted) {
+      if (mountedRef.current) {
         setSession(session)
         setUser(session?.user ?? null)
         if (session?.user) {
-           await refreshProfile(session.user.id)
+          const profileData = await fetchProfileSafe(session.user.id)
+          if (mountedRef.current && profileData) {
+            setProfile(profileData)
+          }
         } else {
           setProfile(null)
         }
@@ -68,7 +105,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     return () => {
-      mounted = false
+      mountedRef.current = false
+      clearTimeout(safetyTimer)
       subscription.unsubscribe()
     }
   }, [])
@@ -93,3 +131,4 @@ export function useAuth() {
   if (!context) throw new Error('useAuth must be used within AuthProvider')
   return context
 }
+

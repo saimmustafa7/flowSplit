@@ -2,7 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, UserRound, Bell } from 'lucide-react'
+import { LayoutDashboard, Users, UserRound, Bell, BarChart3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useNotifications } from '@/context/NotificationContext'
 
@@ -11,9 +11,10 @@ export function BottomNav() {
   const { pendingCount } = useNotifications()
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard', label: 'Home', icon: LayoutDashboard },
     { href: '/group', label: 'Groups', icon: Users },
     { href: '/solo', label: 'Solo', icon: UserRound },
+    { href: '/stats', label: 'Stats', icon: BarChart3 },
     { href: '/notifications', label: 'Alerts', icon: Bell },
   ]
 
