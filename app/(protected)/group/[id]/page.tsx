@@ -45,11 +45,11 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [members, setMembers] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
-  
+
   const [isAddingTxn, setIsAddingTxn] = useState(false)
   const [isInviting, setIsInviting] = useState(false)
   const [isMembersOpen, setIsMembersOpen] = useState(false)
-  
+
   const { user: currentUser } = useAuth()
   const { showToast } = useToast()
 
@@ -92,7 +92,7 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
   }
 
   if (loading) {
-     return <div className="p-4"><SkeletonListItem /><SkeletonListItem /></div>
+    return <div className="p-4"><SkeletonListItem /><SkeletonListItem /></div>
   }
 
   if (!group) return <div className="p-4">Group not found</div>
@@ -127,23 +127,23 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
       </div>
 
       <div className="flex gap-2 sticky top-[64px] z-30 bg-[var(--bg-primary)] py-2 border-b border-[var(--border)]">
-         <Button variant="primary" className="flex-1 bg-[var(--text-primary)] text-[var(--text-inverse)]">Expenses</Button>
-         <Link href={`/group/${groupId}/ledger`} className="flex-1">
-            <Button variant="ghost" className="w-full">Balances</Button>
-         </Link>
+        <Button variant="primary" className="flex-1 bg-[var(--text-primary)] text-[var(--text-inverse)]">Expenses</Button>
+        <Link href={`/group/${groupId}/ledger`} className="flex-1">
+          <Button variant="ghost" className="w-full">Balances</Button>
+        </Link>
       </div>
 
       <div className="flex gap-2 mb-4">
-         <Button onClick={() => setIsAddingTxn(true)} className="flex-1 gap-2 bg-[var(--text-primary)] text-[var(--text-inverse)]" disabled={members.length < 2}>
-           <Plus size={18} /> Add Bill
-         </Button>
-         <Button onClick={() => setIsInviting(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
-           <Send size={18} /> Invite
-         </Button>
-         <Button onClick={() => setIsMembersOpen(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
-           <Users size={18} />
-           <span className="hidden sm:inline">Members</span>
-         </Button>
+        <Button onClick={() => setIsAddingTxn(true)} className="flex-1 gap-2 bg-[var(--text-primary)] text-[var(--text-inverse)]" disabled={members.length < 2}>
+          <Plus size={18} /> Add Bill
+        </Button>
+        <Button onClick={() => setIsInviting(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
+          <Send size={18} /> Invite
+        </Button>
+        <Button onClick={() => setIsMembersOpen(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
+          <Users size={18} />
+          <span className="hidden sm:inline">Members</span>
+        </Button>
       </div>
 
       {members.length < 2 && (
@@ -155,61 +155,61 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
       {/* Transactions List */}
       <div className="mt-6">
         {transactions.length === 0 ? (
-          <EmptyState 
-            icon={Receipt} 
-            title="No bills yet" 
+          <EmptyState
+            icon={Receipt}
+            title="No bills yet"
             description="When anyone adds a shared expense, it'll show up here."
           />
         ) : (
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] overflow-hidden">
-             <AnimatePresence>
-               {transactions.map(txn => (
-                 <motion.div
-                    key={txn.id}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center justify-between p-4 border-b border-[var(--border)] last:border-0 group"
-                 >
-                    <div>
-                      <h3 className="font-bold text-[var(--text-primary)]">{txn.title}</h3>
-                      <p className="text-xs text-[var(--text-secondary)] mt-1">Paid by {txn.payer?.name} • {getSplitModeLabel(txn)}</p>
-                      <p className="text-xs text-[var(--text-tertiary)] mt-1">
-                        {(txn.splits ?? [])
-                          .filter((split) => split.amount > 0 && split.user_id !== txn.paid_by)
-                          .map((split) => {
-                            const memberName = members.find((m) => m.id === split.user_id)?.name ?? 'Member'
-                            return `${memberName} ${formatCurrency(split.amount)}`
-                          })
-                          .join('  ')}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="font-bold font-satoshi text-lg">{formatCurrency(txn.total_amount)}</span>
-                      <span className="text-xs text-[var(--text-tertiary)]">{new Date(txn.transaction_date).toLocaleString()}</span>
-                      {currentUser?.id === txn.paid_by && (
-                        <button onClick={() => handleDelete(txn.id)} className="text-xs text-negative md:opacity-0 group-hover:opacity-100 transition-opacity">
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                 </motion.div>
-               ))}
-             </AnimatePresence>
+            <AnimatePresence>
+              {transactions.map(txn => (
+                <motion.div
+                  key={txn.id}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center justify-between p-4 border-b border-[var(--border)] last:border-0 group"
+                >
+                  <div>
+                    <h3 className="font-bold text-[var(--text-primary)]">{txn.title}</h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">Paid by {txn.payer?.name} • {getSplitModeLabel(txn)}</p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-1">
+                      {(txn.splits ?? [])
+                        .filter((split) => split.amount > 0 && split.user_id !== txn.paid_by)
+                        .map((split) => {
+                          const memberName = members.find((m) => m.id === split.user_id)?.name ?? 'Member'
+                          return `${memberName} ${formatCurrency(split.amount)}`
+                        })
+                        .join('  ')}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="font-bold font-satoshi text-lg">{formatCurrency(txn.total_amount)}</span>
+                    <span className="text-xs text-[var(--text-tertiary)]">{new Date(txn.transaction_date).toLocaleString()}</span>
+                    {currentUser?.id === txn.paid_by && (
+                      <button onClick={() => handleDelete(txn.id)} className="text-xs text-negative md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </div>
 
       {isAddingTxn && (
-      <AddTransactionSheet 
-           groupId={groupId}
-           groupName={group.name}
-           members={members} 
-           isOpen={isAddingTxn} 
-           onClose={() => setIsAddingTxn(false)} 
-           onSuccess={onTransactionAdded} 
-         />
+        <AddTransactionSheet
+          groupId={groupId}
+          groupName={group.name}
+          members={members}
+          isOpen={isAddingTxn}
+          onClose={() => setIsAddingTxn(false)}
+          onSuccess={onTransactionAdded}
+        />
       )}
 
       <InviteMemberModal
