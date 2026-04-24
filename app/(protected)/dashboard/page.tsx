@@ -58,9 +58,9 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 md:px-0">
         <Link href="/solo" className="block">
-          <Card className="hover:scale-[1.02] transform transition-transform group relative overflow-hidden bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-card)]">
+          <Card className="hover:scale-[1.02] transform transition-transform group relative overflow-hidden bg-[var(--bg-surface)] border-[var(--border-strong)]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-accent/10 rounded-lg text-accent">
+              <div className="p-2 bg-[var(--text-primary)] rounded-lg text-[var(--text-inverse)]">
                 <Wallet size={24} />
               </div>
               <h2 className="text-lg font-bold font-clash">Recent Solo</h2>
@@ -69,16 +69,16 @@ export default function DashboardPage() {
                <AnimatedNumber value={totalSoloThisMonth} format={(v) => formatCurrency(v)} />
             </div>
             <p className="text-[var(--text-secondary)] text-sm mt-1">spent recently</p>
-            <div className="absolute right-4 bottom-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute right-4 bottom-4 text-[var(--text-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
               <ArrowRight />
             </div>
           </Card>
         </Link>
 
         <Link href="/group" className="block">
-          <Card className="hover:scale-[1.02] transform transition-transform group relative overflow-hidden bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-card)]">
+          <Card className="hover:scale-[1.02] transform transition-transform group relative overflow-hidden bg-[var(--bg-surface)] border-[var(--border-strong)]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-positive/10 rounded-lg text-positive">
+              <div className="p-2 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)]">
                 <Users size={24} />
               </div>
               <h2 className="text-lg font-bold font-clash">Active Groups</h2>
@@ -87,7 +87,7 @@ export default function DashboardPage() {
                <AnimatedNumber value={groups.length} />
             </div>
             <p className="text-[var(--text-secondary)] text-sm mt-1">groups joined</p>
-            <div className="absolute right-4 bottom-4 text-positive opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute right-4 bottom-4 text-[var(--text-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
               <ArrowRight />
             </div>
           </Card>

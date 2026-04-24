@@ -16,7 +16,7 @@ import { BottomSheet } from '@/components/ui/BottomSheet'
 import { Button } from '@/components/ui/Button'
 import { getRawBalanceBetween } from '@/lib/ledger'
 import { assertSplitIntegrity } from '@/lib/validators'
-import { Minus, Plus } from 'lucide-react'
+import { Minus, Plus, Utensils, Car, Gamepad2, HeartPulse, ShoppingBag, Plane, Home, Package, Check } from 'lucide-react'
 import { DebtPreview } from '@/components/group/DebtPreview'
 
 interface AddTransactionSheetProps {
@@ -36,9 +36,9 @@ const panelVariants = {
 }
 
 const categories = [
-  { value: 'food', icon: '🍔' }, { value: 'transport', icon: '🚗' }, { value: 'entertainment', icon: '🎮' },
-  { value: 'health', icon: '🏥' }, { value: 'shopping', icon: '🛒' }, { value: 'travel', icon: '✈️' },
-  { value: 'rent', icon: '🏠' }, { value: 'other', icon: '📦' }
+  { value: 'food', icon: Utensils }, { value: 'transport', icon: Car }, { value: 'entertainment', icon: Gamepad2 },
+  { value: 'health', icon: HeartPulse }, { value: 'shopping', icon: ShoppingBag }, { value: 'travel', icon: Plane },
+  { value: 'rent', icon: Home }, { value: 'other', icon: Package }
 ] as const
 
 const normalizeTwoDecimals = (value: string) => {
@@ -347,18 +347,32 @@ export function AddTransactionSheet({ groupId, groupName, members, isOpen, onClo
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="h-11 w-full rounded-[var(--radius-md)] px-3 border border-[var(--border-subtle)] bg-[var(--bg-input)]" />
             <p className="text-xs text-[var(--text-secondary)] mt-2">Category</p>
             <div className="grid grid-cols-4 gap-1 mt-1">
-              {categories.map((item) => (
-                <button key={item.value} type="button" onClick={() => setCategory(item.value)} className={`h-10 rounded-[var(--radius-sm)] border ${category === item.value ? 'border-[var(--brand)] bg-[var(--brand-dim)]' : 'border-[var(--border-subtle)] bg-[var(--bg-input)]'}`}>{item.icon}</button>
-              ))}
+              {categories.map((item) => {
+                const Icon = item.icon
+                return (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => setCategory(item.value)}
+                    className={`h-10 rounded-[var(--radius-sm)] border flex items-center justify-center transition-all ${
+                      category === item.value 
+                        ? 'border-[var(--text-primary)] bg-[var(--text-primary)] text-[var(--text-inverse)] scale-105' 
+                        : 'border-[var(--border-subtle)] bg-[var(--bg-input)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]'
+                    }`}
+                  >
+                    <Icon size={18} />
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
 
         <div>
           <p className="text-xs text-[var(--text-secondary)] mb-2">Split Mode</p>
-          <div className="grid grid-cols-5 gap-1 bg-[var(--bg-input)] p-1 rounded-full">
+          <div className="grid grid-cols-5 gap-1 bg-[var(--bg-input)] p-1 rounded-full border border-[var(--border-subtle)]">
             {(['equal', 'exact', 'shares', 'percentage', 'mine'] as SplitMode[]).map((mode) => (
-              <button key={mode} type="button" onClick={() => handleModeChange(mode)} className={`h-9 rounded-full text-xs ${splitMode === mode ? 'bg-[var(--brand)] text-white' : 'text-[var(--text-secondary)]'}`}>{mode === 'percentage' ? '%' : mode}</button>
+              <button key={mode} type="button" onClick={() => handleModeChange(mode)} className={`h-9 rounded-full text-xs font-medium transition-all ${splitMode === mode ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>{mode === 'percentage' ? '%' : mode}</button>
             ))}
           </div>
         </div>
@@ -370,7 +384,7 @@ export function AddTransactionSheet({ groupId, groupName, members, isOpen, onClo
                 key={m.id}
                 type="button"
                 onClick={() => (m.id !== payerId ? toggleMemberInEqual(m.id) : undefined)}
-                className={`w-full p-3 rounded-[var(--radius-md)] border flex justify-between ${equalIncludes.has(m.id) ? 'border-[var(--brand)]' : 'border-[var(--border-subtle)] opacity-50'} ${m.id === payerId ? 'cursor-not-allowed' : ''}`}
+                className={`w-full p-3 rounded-[var(--radius-md)] border flex justify-between transition-all ${equalIncludes.has(m.id) ? 'border-[var(--text-primary)] bg-[var(--text-primary)]/5' : 'border-[var(--border-subtle)] opacity-50'} ${m.id === payerId ? 'cursor-not-allowed' : ''}`}
               >
                 <span>{m.name}</span>
                 <span className="font-mono">
@@ -390,8 +404,8 @@ export function AddTransactionSheet({ groupId, groupName, members, isOpen, onClo
                 ))}
                 <div className="mt-2">
                   <div className="h-2 rounded-full bg-[var(--bg-input)] overflow-hidden"><motion.div layout className="h-full" style={{ width: `${amountPaisa > 0 ? Math.min(100, (exactProgressAssigned / amountPaisa) * 100) : 0}%`, backgroundColor: progressColor }} /></div>
-                  <p className="text-xs mt-1 text-[var(--text-secondary)]">₨{(exactProgressAssigned / 100).toLocaleString()} / ₨{(amountPaisa / 100).toLocaleString()} {exactValidation.valid ? '✓' : exactValidation.message}</p>
-                  {!exactValidation.valid && exactValidation.diff > 0 && <button type="button" onClick={distributeExactRemaining} className="text-xs text-[var(--brand)] mt-1">Split remaining equally</button>}
+                  <p className="text-xs mt-1 text-[var(--text-secondary)] flex items-center gap-1">₨{(exactProgressAssigned / 100).toLocaleString()} / ₨{(amountPaisa / 100).toLocaleString()} {exactValidation.valid ? <Check size={12} className="text-white" /> : exactValidation.message}</p>
+                  {!exactValidation.valid && exactValidation.diff > 0 && <button type="button" onClick={distributeExactRemaining} className="text-xs text-[var(--text-primary)] underline underline-offset-2 mt-1">Split remaining equally</button>}
                 </div>
               </>
             )}
@@ -423,8 +437,8 @@ export function AddTransactionSheet({ groupId, groupName, members, isOpen, onClo
                 ))}
                 <div className="mt-2">
                   <div className="h-2 rounded-full bg-[var(--bg-input)] overflow-hidden"><motion.div layout className="h-full" style={{ width: `${Math.min(100, Math.max(0, pctSum))}%`, backgroundColor: progressColor }} /></div>
-                  <p className="text-xs mt-1 text-[var(--text-secondary)]">{pctSum.toFixed(2)}% / 100% {percentageValidation.valid ? '✓' : percentageValidation.message}</p>
-                  {!percentageValidation.valid && percentageValidation.remaining > 0 && <button type="button" onClick={distributePercentRemaining} className="text-xs text-[var(--brand)] mt-1">Distribute remaining equally</button>}
+                  <p className="text-xs mt-1 text-[var(--text-secondary)] flex items-center gap-1">{pctSum.toFixed(2)}% / 100% {percentageValidation.valid ? <Check size={12} className="text-white" /> : percentageValidation.message}</p>
+                  {!percentageValidation.valid && percentageValidation.remaining > 0 && <button type="button" onClick={distributePercentRemaining} className="text-xs text-[var(--text-primary)] underline underline-offset-2 mt-1">Distribute remaining equally</button>}
                 </div>
               </>
             )}

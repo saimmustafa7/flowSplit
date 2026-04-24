@@ -52,7 +52,7 @@ export function SettleUpModal({ groupId, toId, toName, maxAmount, isOpen, onClos
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#7C6BFF', '#22C55E', '#F59E0B']
+        colors: ['#FFFFFF', '#A1A1AA', '#52525B']
       })
       showToast('Payment settled!', 'success')
       onSuccess()
@@ -71,7 +71,7 @@ export function SettleUpModal({ groupId, toId, toName, maxAmount, isOpen, onClos
           This will reduce your debt in the ledger.
         </p>
 
-        {error && <div className="bg-negative/10 text-negative p-3 rounded-lg text-sm">{error}</div>}
+        {error && <div className="bg-[var(--negative-dim)] text-[var(--negative)] p-3 rounded-lg text-sm">{error}</div>}
 
         <div>
           <label className="block text-sm mb-1 text-[var(--text-secondary)] font-medium">Amount to settle</label>
@@ -83,7 +83,7 @@ export function SettleUpModal({ groupId, toId, toName, maxAmount, isOpen, onClos
               value={amountInput}
               onChange={(e) => setAmountInput(e.target.value)}
               required
-              className="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg pl-8 pr-4 py-3 outline-none focus:border-accent font-mono text-lg"
+              className="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg pl-8 pr-4 py-3 outline-none focus:border-[var(--text-primary)] font-mono text-lg"
             />
           </div>
           <p className="text-xs text-[var(--text-secondary)] mt-2">Maximum you owe: {formatCurrency(maxAmount)}</p>

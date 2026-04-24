@@ -101,7 +101,7 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
     <div className="px-4 md:px-0 space-y-6 pb-24 md:pb-8">
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <Link href="/group" className="text-sm text-[var(--text-secondary)] hover:text-accent flex items-center gap-1 font-medium w-fit">
+        <Link href="/group" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1 font-medium w-fit transition-colors">
           <ArrowLeft size={16} /> Back to groups
         </Link>
         <div className="flex justify-between items-start">
@@ -113,7 +113,7 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
               <h1 className="text-3xl font-bold font-clash">{group.name}</h1>
               <button
                 onClick={() => setIsMembersOpen(true)}
-                className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-accent transition-colors mt-0.5"
+                className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors mt-0.5"
               >
                 <Users size={14} />
                 {members.length} member{members.length !== 1 ? 's' : ''}
@@ -127,14 +127,14 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
       </div>
 
       <div className="flex gap-2 sticky top-[64px] z-30 bg-[var(--bg-primary)] py-2 border-b border-[var(--border)]">
-         <Button variant="primary" className="flex-1">Expenses</Button>
+         <Button variant="primary" className="flex-1 bg-[var(--text-primary)] text-[var(--text-inverse)]">Expenses</Button>
          <Link href={`/group/${groupId}/ledger`} className="flex-1">
             <Button variant="ghost" className="w-full">Balances</Button>
          </Link>
       </div>
 
       <div className="flex gap-4 mb-4">
-         <Button onClick={() => setIsAddingTxn(true)} className="flex-1 gap-2" disabled={members.length < 2}>
+         <Button onClick={() => setIsAddingTxn(true)} className="flex-1 gap-2 bg-[var(--text-primary)] text-[var(--text-inverse)]" disabled={members.length < 2}>
            <Plus size={18} /> Add Bill
          </Button>
          <Button onClick={() => setIsInviting(true)} variant="ghost" className="gap-2 border border-[var(--border)]">
@@ -143,7 +143,7 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
       </div>
 
       {members.length < 2 && (
-        <div className="bg-warning/10 text-warning px-4 py-3 rounded-xl border border-warning/20 text-sm">
+        <div className="bg-[var(--bg-input)] text-[var(--text-secondary)] px-4 py-3 rounded-xl border border-[var(--border-strong)] text-sm">
           Invite members to the group before you can add transactions to split.
         </div>
       )}

@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { Bell, LogOut, ArrowLeft, LayoutDashboard, Users, UserRound, BarChart3 } from 'lucide-react'
+import { Bell, LogOut, ArrowLeft, LayoutDashboard, Users, UserRound, BarChart3, ScanLine } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useNotifications } from '@/context/NotificationContext'
 import Link from 'next/link'
@@ -31,8 +31,11 @@ export function Navbar() {
               <ArrowLeft size={20} />
             </button>
           )}
-          <Link href="/dashboard" className="text-xl font-bold font-clash text-accent flex items-center gap-2">
-            <span>💸 FlowSplit</span>
+          <Link href="/dashboard" className="text-xl font-bold font-clash text-[var(--text-primary)] flex items-center gap-2 tracking-tight">
+            <div className="w-8 h-8 bg-[var(--text-primary)] text-[var(--text-inverse)] rounded flex items-center justify-center">
+              <ScanLine size={18} strokeWidth={2.5} />
+            </div>
+            <span>FLOWSPLIT</span>
           </Link>
         </div>
 
@@ -47,7 +50,7 @@ export function Navbar() {
                 href={item.href}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-[var(--brand-dim)] text-[var(--brand)]'
+                    ? 'bg-[var(--text-primary)] text-[var(--text-inverse)]'
                     : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
                 }`}
               >
@@ -62,7 +65,7 @@ export function Navbar() {
           <Link href="/notifications" className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
             <Bell size={20} />
             {pendingCount > 0 && (
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-[var(--bg-card)]"></span>
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[var(--text-primary)] rounded-full border-2 border-[var(--bg-card)]"></span>
             )}
           </Link>
 

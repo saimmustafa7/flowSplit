@@ -5,26 +5,26 @@ import { Group } from '@/data/types'
 import { formatCurrency } from '@/lib/formatters'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { Card } from '@/components/ui/Card'
-import { BarChart3, TrendingUp, TrendingDown, Minus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { BarChart3, TrendingUp, TrendingDown, Minus, ChevronLeft, ChevronRight, Utensils, Car, Gamepad2, HeartPulse, ShoppingBag, Plane, Zap, Home, Package } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 type Tab = 'solo' | 'groups' | 'combined'
 
 const CATEGORY_COLORS: Record<string, string> = {
-  food: '#F59E0B',
-  transport: '#3B82F6',
-  entertainment: '#8B5CF6',
-  health: '#EF4444',
-  shopping: '#EC4899',
-  travel: '#06B6D4',
-  utilities: '#10B981',
-  rent: '#6366F1',
-  other: '#6B7280',
+  food: '#FFFFFF',
+  transport: '#E4E4E7',
+  entertainment: '#D4D4D8',
+  health: '#A1A1AA',
+  shopping: '#71717A',
+  travel: '#52525B',
+  utilities: '#3F3F46',
+  rent: '#27272A',
+  other: '#18181B',
 }
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  food: '🍔', transport: '🚗', entertainment: '🎮', health: '🏥',
-  shopping: '🛒', travel: '✈️', utilities: '⚡', rent: '🏠', other: '📦',
+const CATEGORY_ICONS: Record<string, any> = {
+  food: Utensils, transport: Car, entertainment: Gamepad2, health: HeartPulse,
+  shopping: ShoppingBag, travel: Plane, utilities: Zap, rent: Home, other: Package,
 }
 
 function CategoryBreakdown({ byCategory, total }: { byCategory: Record<string, number>; total: number }) {
@@ -37,7 +37,9 @@ function CategoryBreakdown({ byCategory, total }: { byCategory: Record<string, n
         const pct = total > 0 ? (amount / total) * 100 : 0
         return (
           <div key={cat} className="flex items-center gap-3">
-            <span className="text-lg w-7 text-center">{CATEGORY_EMOJI[cat] || '📦'}</span>
+            <div className="w-8 h-8 rounded bg-[var(--bg-input)] flex items-center justify-center text-[var(--text-secondary)]">
+              {React.createElement(CATEGORY_ICONS[cat] || Package, { size: 16 })}
+            </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-baseline mb-1">
                 <span className="capitalize text-sm font-medium text-[var(--text-primary)]">{cat}</span>
@@ -67,7 +69,7 @@ function MonthCard({ bucket, label, amountLabel, amount }: {
   amount: number
 }) {
   return (
-    <Card className="bg-gradient-to-br from-[var(--bg-elevated)] to-[var(--bg-card)]">
+    <Card className="bg-[var(--bg-surface)] border-[var(--border-strong)]">
       <div className="flex justify-between items-start mb-4">
         <div>
           <p className="text-sm text-[var(--text-secondary)]">{label}</p>
@@ -222,7 +224,7 @@ export default function StatsPage() {
             onClick={() => setTab(t.id)}
             className={`flex-1 h-10 rounded-full text-sm font-bold transition-all ${
               tab === t.id
-                ? 'bg-[var(--brand)] text-white shadow-md'
+                ? 'bg-[var(--text-primary)] text-[var(--text-inverse)] shadow-lg'
                 : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
@@ -247,8 +249,8 @@ export default function StatsPage() {
           <motion.div key="combined" variants={slideVariants} initial="initial" animate="animate" exit="exit" className="space-y-4">
             {/* Summary cards */}
             <div className="grid grid-cols-2 gap-3">
-              <Card className="bg-gradient-to-br from-[var(--brand-dim)] to-[var(--bg-card)]">
-                <p className="text-xs text-[var(--text-secondary)] mb-1">Total Spent</p>
+              <Card className="bg-[var(--text-primary)] text-[var(--text-inverse)]">
+                <p className="text-xs opacity-70 mb-1">Total Spent</p>
                 <p className="text-xl font-bold font-clash">{formatCurrency(currentCombined.total)}</p>
                 {previousCombined && <TrendIndicator current={currentCombined.total} previous={previousCombined.total} />}
               </Card>
@@ -256,8 +258,8 @@ export default function StatsPage() {
                 <p className="text-xs text-[var(--text-secondary)] mb-1">Transactions</p>
                 <p className="text-xl font-bold font-clash">{currentCombined.count}</p>
                 <div className="flex gap-2 mt-1">
-                  <span className="text-xs text-accent">{currentSolo?.count || 0} solo</span>
-                  <span className="text-xs text-[var(--positive)]">{currentGroup?.count || 0} group</span>
+                  <span className="text-xs opacity-60">{currentSolo?.count || 0} solo</span>
+                  <span className="text-xs opacity-60">{currentGroup?.count || 0} group</span>
                 </div>
               </Card>
             </div>
@@ -273,7 +275,7 @@ export default function StatsPage() {
               </Card>
               <Card>
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 rounded-full bg-[var(--positive)]" />
+                  <div className="w-2 h-2 rounded-full bg-[var(--text-secondary)]" />
                   <span className="text-xs text-[var(--text-secondary)]">Groups (your share)</span>
                 </div>
                 <p className="font-bold font-clash">{formatCurrency(currentCombined.groupTotal)}</p>

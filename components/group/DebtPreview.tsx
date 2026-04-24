@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { formatCurrency } from '@/lib/formatters'
+import { Check, TrendingUp, TrendingDown } from 'lucide-react'
 
 export interface DebtPreviewItem {
   debtorName: string
@@ -22,13 +22,13 @@ export function DebtPreview({ amountPaisa, title, items }: DebtPreviewProps) {
       {amountPaisa <= 0 || !title.trim() ? (
         <p className="text-sm text-[var(--text-secondary)]">Fill in amount to see preview</p>
       ) : items.length === 0 ? (
-        <p className="text-sm text-[var(--positive)]">No debt created ✓</p>
+        <p className="text-sm text-[var(--text-primary)] flex items-center gap-1">No debt created <Check size={14} /></p>
       ) : (
         items.map((item) => (
           <div key={`${item.debtorName}-${item.creditorName}`} className="flex items-center justify-between text-sm py-0.5">
             <span>{item.debtorName} owes {item.creditorName}</span>
-            <span className={`font-mono ${item.isIncrease ? 'text-[var(--negative)]' : 'text-[var(--positive)]'}`}>
-              {formatCurrency(item.amount)} {item.isIncrease ? '▲' : '▼'}
+            <span className={`font-mono flex items-center gap-1 ${item.isIncrease ? 'text-[var(--text-secondary)]' : 'text-[var(--text-primary)]'}`}>
+              {formatCurrency(item.amount)} {item.isIncrease ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
             </span>
           </div>
         ))
