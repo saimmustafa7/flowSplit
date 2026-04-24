@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import { Check, TrendingUp, TrendingDown } from 'lucide-react'
+import { formatCurrency } from '@/lib/formatters'
 
 export interface DebtPreviewItem {
   debtorName: string
