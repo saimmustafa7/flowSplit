@@ -11,6 +11,7 @@ import { formatCurrency } from '@/lib/formatters'
 import { calculateSplits, distributeRemaining, validateExactAmounts, validatePercentages } from '@/lib/splitCalculator'
 import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
+import { emailService } from '@/lib/emailService'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { Button } from '@/components/ui/Button'
 import { getRawBalanceBetween } from '@/lib/ledger'
@@ -20,6 +21,7 @@ import { DebtPreview } from '@/components/group/DebtPreview'
 
 interface AddTransactionSheetProps {
   groupId: string
+  groupName: string
   members: Profile[]
   isOpen: boolean
   onClose: () => void
@@ -53,7 +55,7 @@ const toPaisaSafe = (raw: string) => {
   return Math.round(parsed * 100)
 }
 
-export function AddTransactionSheet({ groupId, members, isOpen, onClose, onSuccess }: AddTransactionSheetProps) {
+export function AddTransactionSheet({ groupId, groupName, members, isOpen, onClose, onSuccess }: AddTransactionSheetProps) {
   const { user } = useAuth()
   const { showToast } = useToast()
   const memberIds = useMemo(() => members.map((m) => m.id), [members])
@@ -207,6 +209,25 @@ export function AddTransactionSheet({ groupId, members, isOpen, onClose, onSucce
       assertSplitIntegrity(splitResult.splits, amountPaisa)
       await createTransaction(groupId, title.trim(), amountPaisa, payerId, category, date, splitResult.splits, splitMode)
       showToast(`"${title.trim()}" added`, 'success')
+
+      // Send expense notification emails to members who owe (fire-and-forget)
+      const payerProfile = members.find((m) => m.id === payerId)
+      const payerName = payerProfile?.name ?? 'Someone'
+      const totalFormatted = formatCurrency(amountPaisa)
+      members.forEach((member) => {
+        const share = splitResult.splits[member.id]
+        if (!share || share <= 0 || member.id === payerId) return
+        emailService.sendExpenseNotification({
+          toEmail: member.email,
+          groupName,
+          expenseTitle: title.trim(),
+          paidBy: payerName,
+          totalAmountFormatted: totalFormatted,
+          yourShareFormatted: formatCurrency(share),
+          balanceLabel: `You owe ${payerName} ${formatCurrency(share)}`,
+        })
+      })
+
       reset()
       onSuccess()
     } catch (err: unknown) {

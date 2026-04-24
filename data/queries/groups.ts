@@ -147,3 +147,58 @@ export async function joinGroupByCode(rawCode: string): Promise<Group> {
 
   return group
 }
+
+export async function leaveGroup(groupId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user
+  if (!user) throw new Error('Not authenticated')
+
+  // Fetch the group to check if user is the creator
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('created_by')
+    .eq('id', groupId)
+    .single()
+  if (groupError) throw groupError
+
+  if (group.created_by === user.id) {
+    throw new Error('You created this group. Transfer ownership or delete the group instead of leaving.')
+  }
+
+  const { error } = await supabase
+    .from('group_members')
+    .delete()
+    .eq('group_id', groupId)
+    .eq('user_id', user.id)
+  if (error) throw error
+}
+
+export async function removeMember(groupId: string, userId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user
+  if (!user) throw new Error('Not authenticated')
+
+  // Only the group creator can remove members
+  const { data: group, error: groupError } = await supabase
+    .from('groups')
+    .select('created_by')
+    .eq('id', groupId)
+    .single()
+  if (groupError) throw groupError
+
+  if (group.created_by !== user.id) {
+    throw new Error('Only the group creator can remove members')
+  }
+
+  if (userId === user.id) {
+    throw new Error('Cannot remove yourself as the group creator')
+  }
+
+  const { error } = await supabase
+    .from('group_members')
+    .delete()
+    .eq('group_id', groupId)
+    .eq('user_id', userId)
+  if (error) throw error
+}
+

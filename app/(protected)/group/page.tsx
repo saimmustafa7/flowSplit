@@ -51,11 +51,12 @@ export default function GroupsPage() {
     try {
       const nameCheck = validateGroupName(name)
       if (!nameCheck.valid) { setFormError(nameCheck.error!); return }
-      const emojiCheck = validateEmoji(emoji)
+      const trimmedEmoji = emoji.trim()
+      const emojiCheck = validateEmoji(trimmedEmoji)
       if (!emojiCheck.valid) { setFormError(emojiCheck.error!); return }
 
       setFormLoading(true)
-      const newGroup = await createGroup(name.trim(), emoji)
+      const newGroup = await createGroup(name.trim(), trimmedEmoji)
       setGroups(prev => [newGroup, ...prev])
       setIsAdding(false)
       setName('')

@@ -5,15 +5,17 @@ import { fetchTransactions, deleteTransaction } from '@/data/queries/transaction
 import { fetchGroupMembers } from '@/data/queries/groups'
 import { supabase } from '@/lib/supabase'
 import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { SkeletonListItem } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { formatCurrency } from '@/lib/formatters'
 import Link from 'next/link'
-import { Plus, Receipt, ArrowLeft, Send } from 'lucide-react'
+import { Plus, Receipt, ArrowLeft, Send, Users } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AddTransactionSheet } from '@/components/group/AddTransactionSheet'
 import { InviteMemberModal } from '@/components/group/InviteMemberModal'
+import { MembersSheet } from '@/components/group/MembersSheet'
 
 function getSplitModeLabel(txn: Transaction): string {
   if (txn.split_mode === 'shares') {
@@ -46,7 +48,9 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
   
   const [isAddingTxn, setIsAddingTxn] = useState(false)
   const [isInviting, setIsInviting] = useState(false)
+  const [isMembersOpen, setIsMembersOpen] = useState(false)
   
+  const { user: currentUser } = useAuth()
   const { showToast } = useToast()
 
   useEffect(() => {
@@ -107,7 +111,13 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
             </div>
             <div>
               <h1 className="text-3xl font-bold font-clash">{group.name}</h1>
-              <p className="text-[var(--text-secondary)]">{members.length} member{members.length !== 1 ? 's' : ''}</p>
+              <button
+                onClick={() => setIsMembersOpen(true)}
+                className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-accent transition-colors mt-0.5"
+              >
+                <Users size={14} />
+                {members.length} member{members.length !== 1 ? 's' : ''}
+              </button>
               <p className="text-xs text-[var(--text-tertiary)] mt-1">
                 Join code: {(group.join_code ?? group.id.slice(0, 8)).toUpperCase()}
               </p>
@@ -174,9 +184,11 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
                     <div className="flex flex-col items-end gap-1">
                       <span className="font-bold font-satoshi text-lg">{formatCurrency(txn.total_amount)}</span>
                       <span className="text-xs text-[var(--text-tertiary)]">{new Date(txn.transaction_date).toLocaleString()}</span>
-                      <button onClick={() => handleDelete(txn.id)} className="text-xs text-negative md:opacity-0 group-hover:opacity-100 transition-opacity">
-                         Delete
-                      </button>
+                      {currentUser?.id === txn.paid_by && (
+                        <button onClick={() => handleDelete(txn.id)} className="text-xs text-negative md:opacity-0 group-hover:opacity-100 transition-opacity">
+                          Delete
+                        </button>
+                      )}
                     </div>
                  </motion.div>
                ))}
@@ -186,8 +198,9 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
       </div>
 
       {isAddingTxn && (
-         <AddTransactionSheet 
-           groupId={groupId} 
+      <AddTransactionSheet 
+           groupId={groupId}
+           groupName={group.name}
            members={members} 
            isOpen={isAddingTxn} 
            onClose={() => setIsAddingTxn(false)} 
@@ -197,9 +210,24 @@ export default function GroupDetailsPage({ params }: { params: Promise<{ id: str
 
       <InviteMemberModal
         groupId={groupId}
+        groupName={group.name}
         isOpen={isInviting}
         onClose={() => setIsInviting(false)}
       />
+
+      {group && currentUser && (
+        <MembersSheet
+          groupId={groupId}
+          groupCreatorId={group.created_by}
+          currentUserId={currentUser.id}
+          members={members}
+          isOpen={isMembersOpen}
+          onClose={() => setIsMembersOpen(false)}
+          onMemberRemoved={(userId) => {
+            setMembers((prev) => prev.filter((m) => m.id !== userId))
+          }}
+        />
+      )}
     </div>
   )
 }

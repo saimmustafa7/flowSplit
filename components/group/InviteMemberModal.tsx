@@ -1,24 +1,29 @@
 "use client"
 import React, { useState } from 'react'
 import { sendInvite } from '@/data/queries/invites'
+import { fetchProfileByEmail } from '@/data/queries/profiles'
 import { isValidEmail } from '@/lib/validators'
 import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
+import { emailService } from '@/lib/emailService'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Mail } from 'lucide-react'
 
 interface InviteMemberModalProps {
   groupId: string
+  groupName: string
   isOpen: boolean
   onClose: () => void
 }
 
-export function InviteMemberModal({ groupId, isOpen, onClose }: InviteMemberModalProps) {
+export function InviteMemberModal({ groupId, groupName, isOpen, onClose }: InviteMemberModalProps) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
   const { showToast } = useToast()
+  const { profile: inviterProfile } = useAuth()
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,6 +39,18 @@ export function InviteMemberModal({ groupId, isOpen, onClose }: InviteMemberModa
     try {
       await sendInvite(groupId, trimmed)
       showToast('Invite sent successfully', 'success')
+
+      // Send email notification (fire-and-forget; errors are swallowed inside emailService)
+      const targetProfile = await fetchProfileByEmail(trimmed).catch(() => null)
+      if (targetProfile && inviterProfile) {
+        emailService.sendInviteNotification({
+          toEmail: targetProfile.email,
+          toName: targetProfile.name,
+          groupName,
+          inviterName: inviterProfile.name,
+        })
+      }
+
       setEmail('')
       onClose()
     } catch (err: unknown) {
@@ -71,3 +88,4 @@ export function InviteMemberModal({ groupId, isOpen, onClose }: InviteMemberModa
     </Modal>
   )
 }
+

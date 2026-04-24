@@ -44,9 +44,20 @@ export function validateGroupName(name: string): { valid: boolean; error?: strin
 }
 
 export function validateEmoji(emoji: string): { valid: boolean; error?: string } {
-  const regex = /^\p{Emoji}$/u;
-  if (!regex.test(emoji)) return { valid: false, error: 'Must be a single emoji' };
-  return { valid: true };
+  const trimmed = emoji.trim()
+  if (!trimmed) return { valid: false, error: 'Emoji is required' }
+  // Use Intl.Segmenter to count grapheme clusters, because many emojis are
+  // multi-codepoint sequences (base + variation selector \uFE0F, ZWJ sequences etc.)
+  // and the simple /^\p{Emoji}$/u regex rejects them.
+  try {
+    const segmenter = new Intl.Segmenter()
+    const segments = [...segmenter.segment(trimmed)]
+    if (segments.length !== 1) return { valid: false, error: 'Must be a single emoji' }
+  } catch {
+    // Fallback: just ensure the string is non-empty and short
+    if (trimmed.length > 8) return { valid: false, error: 'Must be a single emoji' }
+  }
+  return { valid: true }
 }
 
 export function assertSplitIntegrity(splits: Record<string, number>, total: number): void {
