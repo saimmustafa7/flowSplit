@@ -1,10 +1,17 @@
 "use client"
 import React from 'react'
-import { Bell, LogOut, ArrowLeft } from 'lucide-react'
+import { Bell, LogOut, ArrowLeft, LayoutDashboard, Users, UserRound, BarChart3 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { useNotifications } from '@/context/NotificationContext'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+const desktopNavItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/group', label: 'Groups', icon: Users },
+  { href: '/solo', label: 'Solo', icon: UserRound },
+  { href: '/stats', label: 'Stats', icon: BarChart3 },
+]
 
 export function Navbar() {
   const { profile, logout } = useAuth()
@@ -27,6 +34,28 @@ export function Navbar() {
           <Link href="/dashboard" className="text-xl font-bold font-clash text-accent flex items-center gap-2">
             <span>💸 FlowSplit</span>
           </Link>
+        </div>
+
+        {/* Desktop nav links — hidden on mobile */}
+        <div className="hidden md:flex items-center gap-1">
+          {desktopNavItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname.startsWith(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-[var(--brand-dim)] text-[var(--brand)]'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
+                }`}
+              >
+                <Icon size={16} />
+                {item.label}
+              </Link>
+            )
+          })}
         </div>
 
         <div className="flex items-center gap-4">
@@ -54,3 +83,4 @@ export function Navbar() {
     </nav>
   )
 }
+
