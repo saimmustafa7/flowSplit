@@ -73,7 +73,7 @@ export default function DashboardPage() {
               <div className="p-2 bg-[var(--text-primary)] rounded-lg text-[var(--text-inverse)]">
                 <Wallet size={24} />
               </div>
-              <h2 className="text-lg font-bold font-clash">Solo — This Month</h2>
+              <h2 className="text-lg font-bold font-clash">Solo</h2>
             </div>
             <div className="text-3xl font-bold text-inherit">
                <AnimatedNumber value={currentMonthTotal} format={(v) => formatCurrency(v)} />

@@ -16,7 +16,9 @@ import { Plus, Wallet, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 function getYearMonth(date: Date): string {
-  return date.toISOString().slice(0, 7)
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  return `${y}-${m}`
 }
 
 function formatYearMonth(ym: string): string {
@@ -26,8 +28,11 @@ function formatYearMonth(ym: string): string {
 
 function stepMonth(ym: string, delta: number): string {
   const [year, month] = ym.split('-').map(Number)
-  const d = new Date(year, month - 1 + delta, 1)
-  return getYearMonth(d)
+  let newMonth = month + delta
+  let newYear = year
+  if (newMonth > 12) { newMonth -= 12; newYear += 1 }
+  if (newMonth < 1) { newMonth += 12; newYear -= 1 }
+  return `${newYear}-${String(newMonth).padStart(2, '0')}`
 }
 
 function isSameMonth(expenseDate: string, ym: string): boolean {
