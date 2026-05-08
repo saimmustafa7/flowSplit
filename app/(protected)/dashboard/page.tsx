@@ -1,29 +1,41 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import { fetchUserGroups } from '@/data/queries/groups'
-import { fetchSoloExpenses } from '@/data/queries/soloExpenses'
-import { Group, SoloExpense } from '@/data/types'
+import { fetchSoloExpensesForMonth, fetchSoloMonthlyTotals } from '@/data/queries/soloExpenses'
+import { Group } from '@/data/types'
 import { Card } from '@/components/ui/Card'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
 import { formatCurrency } from '@/lib/formatters'
 import Link from 'next/link'
-import { ArrowRight, Wallet, Users } from 'lucide-react'
+import { ArrowRight, Wallet, Users, TrendingDown } from 'lucide-react'
+
+function formatYearMonth(ym: string): string {
+  const [year, month] = ym.split('-').map(Number)
+  return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
 
 export default function DashboardPage() {
   const [groups, setGroups] = useState<Group[]>([])
-  const [recentSolo, setRecentSolo] = useState<SoloExpense[]>([])
+  const [currentMonthTotal, setCurrentMonthTotal] = useState(0)
+  const [pastMonths, setPastMonths] = useState<{ yearMonth: string; total: number }[]>([])
   const [loading, setLoading] = useState(true)
+
+  const currentYM = new Date().toISOString().slice(0, 7) // e.g. "2026-05"
 
   useEffect(() => {
     async function load() {
       try {
-        const [gData, sData] = await Promise.all([
+        const [gData, currentExpenses, allMonthlyTotals] = await Promise.all([
           fetchUserGroups(),
-          fetchSoloExpenses()
+          fetchSoloExpensesForMonth(currentYM),
+          fetchSoloMonthlyTotals()
         ])
         setGroups(gData.slice(0, 3))
-        setRecentSolo(sData.slice(0, 3))
+        // Sum current month
+        setCurrentMonthTotal(currentExpenses.reduce((acc, e) => acc + e.amount, 0))
+        // Past months only (exclude current)
+        setPastMonths(allMonthlyTotals.filter(m => m.yearMonth !== currentYM))
       } catch (err) {
         console.error('Failed to load dashboard', err)
       } finally {
@@ -31,9 +43,7 @@ export default function DashboardPage() {
       }
     }
     load()
-  }, [])
-
-  const totalSoloThisMonth = recentSolo.reduce((acc, curr) => acc + curr.amount, 0) // naive calc for demo
+  }, [currentYM])
 
   if (loading) {
     return (
@@ -63,12 +73,14 @@ export default function DashboardPage() {
               <div className="p-2 bg-[var(--text-primary)] rounded-lg text-[var(--text-inverse)]">
                 <Wallet size={24} />
               </div>
-              <h2 className="text-lg font-bold font-clash">Recent Solo</h2>
+              <h2 className="text-lg font-bold font-clash">Solo — This Month</h2>
             </div>
             <div className="text-3xl font-bold text-inherit">
-               <AnimatedNumber value={totalSoloThisMonth} format={(v) => formatCurrency(v)} />
+               <AnimatedNumber value={currentMonthTotal} format={(v) => formatCurrency(v)} />
             </div>
-            <p className="opacity-60 text-sm mt-1">spent recently</p>
+            <p className="opacity-60 text-sm mt-1">
+              {formatYearMonth(currentYM)}
+            </p>
             <div className="absolute right-4 bottom-4 text-[var(--text-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
               <ArrowRight />
             </div>
@@ -93,6 +105,34 @@ export default function DashboardPage() {
           </Card>
         </Link>
       </div>
+
+      {/* Past months summary */}
+      {pastMonths.length > 0 && (
+        <div className="px-4 md:px-0">
+          <h2 className="text-xl font-bold font-clash mb-3 flex items-center gap-2">
+            <TrendingDown size={20} className="text-[var(--text-secondary)]" />
+            Past Months
+          </h2>
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] overflow-hidden">
+            {pastMonths.map((m, i) => (
+              <Link
+                key={m.yearMonth}
+                href={`/solo?month=${m.yearMonth}`}
+                className={`flex items-center justify-between px-4 py-3 hover:bg-[var(--bg-elevated)] transition-colors ${
+                  i < pastMonths.length - 1 ? 'border-b border-[var(--border)]' : ''
+                }`}
+              >
+                <span className="text-sm font-medium text-[var(--text-secondary)]">
+                  {formatYearMonth(m.yearMonth)}
+                </span>
+                <span className="font-bold font-clash text-[var(--text-primary)]">
+                  {formatCurrency(m.total)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="px-4 md:px-0">
          <h2 className="text-xl font-bold font-clash mb-4 px-2">Quick Actions</h2>
